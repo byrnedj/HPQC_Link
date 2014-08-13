@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Entities TotalResults="3">
+    <Entity Type="defect">
+        <Fields>
+            <Field Name="has-change">
+                <Value></Value>
+            </Field>
+            <Field Name="planned-closing-ver">
+                <Value></Value>
+            </Field>
+            <Field Name="test-reference"/>
+            <Field Name="subject"/>
+            <Field Name="reproducible">
+                <Value>Y</Value>
+            </Field>
+            <Field Name="request-id"/>
+            <Field Name="request-server">
+                <Value></Value>
+            </Field>
+            <Field Name="id">
+                <Value>1</Value>
+            </Field>
+            <Field Name="has-others-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="description">
+                <Value>&lt;html&gt;&#xD;
+&lt;body&gt;&#xD;
+&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;changed description&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&#xD;
+&lt;/body&gt;&#xD;
+&lt;/html&gt;</Value>
+            </Field>
+            <Field Name="priority">
+                <Value></Value>
+            </Field>
+            <Field Name="name">
+                <Value>pls show</Value>
+            </Field>
+            <Field Name="has-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="run-reference"/>
+            <Field Name="alert-data">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="dev-comments">
+                <Value>&lt;html&gt;&#xD;
+&lt;body&gt;&#xD;
+&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;other cmments&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&#xD;
+&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/font&gt;&lt;font face=&quot;Arial&quot; color=&quot;#000080&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;&lt;b&gt;________________________________________&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;&lt;br /&gt;&lt;/span&gt;&lt;/font&gt;&lt;font face=&quot;Arial&quot; color=&quot;#000080&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;&lt;b&gt;Daniel Byrne Jr &amp;lt;aiuaky5&amp;gt;, 7/3/2014:&lt;/b&gt;&lt;/span&gt;&lt;/font&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt; why?&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&#xD;
+&lt;/body&gt;&#xD;
+&lt;/html&gt;</Value>
+            </Field>
+            <Field Name="creation-time">
+                <Value>2014-07-02</Value>
+            </Field>
+            <Field Name="to-mail">
+                <Value></Value>
+            </Field>
+            <Field Name="request-note">
+                <Value></Value>
+            </Field>
+            <Field Name="closing-version">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-id"/>
+            <Field Name="detection-version">
+                <Value></Value>
+            </Field>
+            <Field Name="last-modified">
+                <Value>2014-07-03 11:23:47</Value>
+            </Field>
+            <Field Name="status">
+                <Value>New</Value>
+            </Field>
+            <Field Name="closing-date"/>
+            <Field Name="detected-in-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-in-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="severity">
+                <Value>2-Medium</Value>
+            </Field>
+            <Field Name="bug-ver-stamp">
+                <Value>4</Value>
+            </Field>
+            <Field Name="attachment">
+                <Value></Value>
+            </Field>
+            <Field Name="extended-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="estimated-fix-time"/>
+            <Field Name="target-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="project">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-by">
+                <Value>aiuaky5</Value>
+            </Field>
+            <Field Name="step-reference"/>
+            <Field Name="owner">
+                <Value></Value>
+            </Field>
+            <Field Name="target-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="actual-fix-time"/>
+            <Field Name="request-type">
+                <Value></Value>
+            </Field>
+        </Fields>
+    </Entity>
+    <Entity Type="defect">
+        <Fields>
+            <Field Name="has-change">
+                <Value></Value>
+            </Field>
+            <Field Name="planned-closing-ver">
+                <Value></Value>
+            </Field>
+            <Field Name="test-reference"/>
+            <Field Name="subject"/>
+            <Field Name="reproducible">
+                <Value>Y</Value>
+            </Field>
+            <Field Name="request-id"/>
+            <Field Name="request-server">
+                <Value></Value>
+            </Field>
+            <Field Name="id">
+                <Value>2</Value>
+            </Field>
+            <Field Name="has-others-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="description">
+                <Value>&lt;html&gt;&#xD;
+&lt;body&gt;&#xD;
+&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;There was a farmer who had a dog.&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&#xD;
+&lt;/body&gt;&#xD;
+&lt;/html&gt;</Value>
+            </Field>
+            <Field Name="priority">
+                <Value></Value>
+            </Field>
+            <Field Name="name">
+                <Value>it doesn't work</Value>
+            </Field>
+            <Field Name="has-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="run-reference"/>
+            <Field Name="alert-data">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="dev-comments">
+                <Value></Value>
+            </Field>
+            <Field Name="creation-time">
+                <Value>2014-07-03</Value>
+            </Field>
+            <Field Name="to-mail">
+                <Value></Value>
+            </Field>
+            <Field Name="request-note">
+                <Value></Value>
+            </Field>
+            <Field Name="closing-version">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-id"/>
+            <Field Name="detection-version">
+                <Value></Value>
+            </Field>
+            <Field Name="last-modified">
+                <Value>2014-07-03 07:48:51</Value>
+            </Field>
+            <Field Name="status">
+                <Value>New</Value>
+            </Field>
+            <Field Name="closing-date"/>
+            <Field Name="detected-in-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-in-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="severity">
+                <Value>2-Medium</Value>
+            </Field>
+            <Field Name="bug-ver-stamp">
+                <Value>1</Value>
+            </Field>
+            <Field Name="attachment">
+                <Value></Value>
+            </Field>
+            <Field Name="extended-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="estimated-fix-time"/>
+            <Field Name="target-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="project">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-by">
+                <Value>aiuaky5</Value>
+            </Field>
+            <Field Name="step-reference"/>
+            <Field Name="owner">
+                <Value></Value>
+            </Field>
+            <Field Name="target-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="actual-fix-time"/>
+            <Field Name="request-type">
+                <Value></Value>
+            </Field>
+        </Fields>
+    </Entity>
+    <Entity Type="defect">
+        <Fields>
+            <Field Name="has-change">
+                <Value></Value>
+            </Field>
+            <Field Name="planned-closing-ver">
+                <Value></Value>
+            </Field>
+            <Field Name="test-reference"/>
+            <Field Name="subject"/>
+            <Field Name="reproducible">
+                <Value>Y</Value>
+            </Field>
+            <Field Name="request-id"/>
+            <Field Name="request-server">
+                <Value></Value>
+            </Field>
+            <Field Name="id">
+                <Value>3</Value>
+            </Field>
+            <Field Name="has-others-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="description">
+                <Value>&lt;html&gt;&#xD;
+&lt;body&gt;&#xD;
+&lt;div align=&quot;left&quot;&gt;&lt;font face=&quot;Arial&quot;&gt;&lt;span style=&quot;font-size:8pt&quot;&gt;dscvS&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&#xD;
+&lt;/body&gt;&#xD;
+&lt;/html&gt;</Value>
+            </Field>
+            <Field Name="priority">
+                <Value></Value>
+            </Field>
+            <Field Name="name">
+                <Value>testtttt</Value>
+            </Field>
+            <Field Name="has-linkage">
+                <Value>N</Value>
+            </Field>
+            <Field Name="run-reference"/>
+            <Field Name="alert-data">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="dev-comments">
+                <Value></Value>
+            </Field>
+            <Field Name="creation-time">
+                <Value>2014-07-03</Value>
+            </Field>
+            <Field Name="to-mail">
+                <Value></Value>
+            </Field>
+            <Field Name="request-note">
+                <Value></Value>
+            </Field>
+            <Field Name="closing-version">
+                <Value></Value>
+            </Field>
+            <Field Name="cycle-id"/>
+            <Field Name="detection-version">
+                <Value></Value>
+            </Field>
+            <Field Name="last-modified">
+                <Value>2014-07-03 09:28:33</Value>
+            </Field>
+            <Field Name="status">
+                <Value>New</Value>
+            </Field>
+            <Field Name="closing-date">
+                <Value>2014-07-04</Value>
+            </Field>
+            <Field Name="detected-in-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-in-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="severity">
+                <Value>1-Low</Value>
+            </Field>
+            <Field Name="bug-ver-stamp">
+                <Value>2</Value>
+            </Field>
+            <Field Name="attachment">
+                <Value>Y</Value>
+            </Field>
+            <Field Name="extended-reference">
+                <Value></Value>
+            </Field>
+            <Field Name="estimated-fix-time">
+                <Value>1</Value>
+            </Field>
+            <Field Name="target-rel">
+                <Value></Value>
+            </Field>
+            <Field Name="project">
+                <Value></Value>
+            </Field>
+            <Field Name="detected-by">
+                <Value>aiuaky5</Value>
+            </Field>
+            <Field Name="step-reference"/>
+            <Field Name="owner">
+                <Value>aiuaky5</Value>
+            </Field>
+            <Field Name="target-rcyc">
+                <Value></Value>
+            </Field>
+            <Field Name="actual-fix-time">
+                <Value>1</Value>
+            </Field>
+            <Field Name="request-type">
+                <Value></Value>
+            </Field>
+        </Fields>
+    </Entity>
+</Entities>
