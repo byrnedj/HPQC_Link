@@ -83,8 +83,20 @@ import sun.misc.BASE64Encoder;
  * 
  * 
  * Dependencies,
- * -This project depends on json_simple-1.1, its a free JSON Parser, it might still be on usnxv224.
- * -This project depends on jsoup-1.7.3, its for parsing html as that is how descriptive fields come in from HPQC.
+ * -use maven
+ * 
+ * Debugging
+ * -From the call to Console cons = System.console(); (line 123 atm) to the start of the scheduler are commented out
+ *  because it won't currently work in eclipse
+ * -To debug you should use the command line params and configure a debug configuration in Eclipse
+ * -When doing a Maven Build/Install make sure to uncomment those.
+ * 
+ * TODO: There is a lot to do in the 2nd revision. Update to the current workflow requirements set by Toni Wilson.
+ * TODO: Rewrite JIRA GET
+ * TODO: Rewrite JIRA POST
+ * TODO: Find a way to monitor
+ * TODO: Rewrite HPQC GET - test cases are now something that we want
+ * TODO: Rewrite HPQC POST - we need to create things now, check the HPQC ALM REST API guide.
  * 
  * @author Daniel Byrne - byrnedj12@gmail.com if he is not in the corporate directory.
  *
@@ -182,7 +194,6 @@ public class Service
 			Map<String,Issue> lJIRA = getJIRA( lJIRAProjectName );
 
 			//Resolve deltas (not the airline)
-			betterProcessChanges( lHPQC, lJIRA );
 
 			//post up
 			postHPQC( lHPQC, LWSSO_COOKIE, lHPQCProjectName );
@@ -191,75 +202,6 @@ public class Service
 			System.out.println( "Ending cycle for JIRA project: " +  lJIRAProjectName );
 
 		}
-	}
-
-	/**
-	 * The change logic is done here, this is rev2 so it should be much more robust.
-	 * @param aHPQC HPQC current issue list
-	 * @param aJIRA JIRA current issue list
-	 */
-	public static void betterProcessChanges( Map<String,Issue> aHPQC, Map<String,Issue> aJIRA )
-	{
-		//Date format for comparison
-		SimpleDateFormat dateFormat = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
-
-		//Start with an entry from HPQC (guaranteed)
-		for ( Entry<String, Issue> lHPQCEntry : aHPQC.entrySet() )
-		{
-			Issue lHPQCIssue = lHPQCEntry.getValue();
-			String lHPQCKey = lHPQCEntry.getKey();
-			//If JIRA already has this issue then we should check if they are in sync.
-			if ( aJIRA.containsKey( lHPQCKey ) )
-			{
-
-				Issue lJIRAIssue = aJIRA.get( lHPQCKey );
-				lHPQCIssue.setJIRAKey( lJIRAIssue.getJIRAKey() );
-				lJIRAIssue.setJIRALinkKey( lHPQCIssue.getJIRALinkKey() );
-				//if HPQC issue was last modified AFTER the corresponding issue in JIRA was modified
-				//then the JIRA issue is out of date
-				if ( lHPQCIssue.getLastModified().after( lJIRAIssue.getLastModified() ) )
-				{
-					//set the new values
-					if ( lJIRAIssue.setSyncedFields( lHPQCIssue.getSyncedFields() ) )
-					{
-						System.out.println( "changed old jira issue: " + lJIRAIssue.getJIRAKey() + ", HPQC ID: " + lJIRAIssue.getID() 
-								+ ", the last change in HPQC was at: "+ dateFormat.format( lHPQCIssue.getLastModified() ) + " and the last change in JIRA was " +  lJIRAIssue.getLastModified() );
-					}
-					else
-					{
-						System.out.println( "No changes for " + lJIRAIssue.getJIRAKey() );
-					}
-
-				}
-				//if the HPQC issue was last modified BEFORE the corresponding issue in JIRA was modified
-				//the the HPQC issue is out of date
-				else if ( lHPQCIssue.getLastModified().before( lJIRAIssue.getLastModified() ) )
-				{
-					//set the new values
-					if ( lHPQCIssue.setSyncedFields( lJIRAIssue.getSyncedFields() ) )
-					{
-						System.out.println( "changed old hpqc issue: " + lHPQCIssue.getJIRAKey() + ", HPQC ID: " + lHPQCIssue.getID()
-								+ ", the last change in JIRA was at: "+ dateFormat.format( lJIRAIssue.getLastModified() ) );
-					}
-					else
-					{
-						System.out.println( "No changes for " + lHPQCIssue.getJIRAKey() );
-					}
-
-				}
-				
-			}
-			//if there is no matching key then we have to create an issue in JIRA aka add it to the JIRA map
-			else
-			{
-				System.out.println("added: " +  lHPQCIssue.getID() + " to the list of JIRA" );
-				lHPQCIssue.setAdded( true );
-				aJIRA.put( lHPQCKey, lHPQCIssue );
-
-			}
-			
-		}
-
 	}
 
 
@@ -309,7 +251,7 @@ public class Service
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			Document defects = docBuilder.parse( conn.getInputStream() );
-			lDefectList = convertFromXML( defects );
+
 		}
 		catch( Exception e )
 		{
@@ -342,7 +284,7 @@ public class Service
 			//Reader rabbit because even developers need to have fun.
 			Reader rabbit = new InputStreamReader( conn.getInputStream() );
 			Object issues = JSONValue.parse( rabbit );
-			lIssueList = convertFromJSON( issues );
+
 		}
 		catch( Exception e )
 		{
@@ -352,75 +294,10 @@ public class Service
 
 	}
 
-	/**
-	 * Converts a JSON list of issues (from JIRA) to a map of Issues we can work with
-	 * @param aIssues JSON representation of issues
-	 * @return a map of Issues, where key is equal to the HPQC Defect ID 
-	 */
-	public static Map<String, Issue> convertFromJSON( Object aIssues )
-	{
-		//We have to get the array of issues out
-		JSONArray lListFromJIRA = (JSONArray) ((Map)aIssues).get( "issues" );
-		Map<String, Issue> lIssueList = new HashMap<String, Issue>();
-
-		//Process the array of issues
-		for ( int i = 0; i < lListFromJIRA.size(); i++ )
-		{
-			JSONObject lCurrentIssue = (JSONObject) lListFromJIRA.get( i );
-			JSONObject lFields = (JSONObject) lCurrentIssue.get( "fields" );
-
-			//We only sync issue types of HPQC Defect
-			if ( (((Map) lFields.get( "issuetype" )).get( "name" ).equals( "HPQC Defect" ) ) )
-			{
-
-				Map<String,String> lNewIssueFieldMap = new HashMap<String,String>();
-				//We use Issue.JIRA_NAME_MAP to map the names of fields in JIRA to HPQC defect names.
-
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "summary" ), (String) lFields.get( "summary" ) );
-
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "description" ), (String) lFields.get( "description" ) );
-
-				//HPQC-ID field in JIRA
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "customfield_10609" ), (String) lFields.get( "customfield_10609" ) );
-
-				//HPQC Status field in JIRA
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "customfield_10612" ), (String) lFields.get( "customfield_10612" ) );
-
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "updated" ), (String) lFields.get( "updated" ) );
-
-				//Note the additional parsing for reporter and assignee
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "reporter" ), 
-						(String) ((JSONObject) lFields.get( "reporter" )).get( "name" ) );
-
-
-				//if there was no assignee set it to the sync account
-				String assignee;
-				try
-				{
-					assignee = (String) ((JSONObject) lFields.get( "assignee" )).get( "name" );
-				}
-
-				catch ( NullPointerException e )
-				{
-					assignee = DEFAULT_OWNER;
-				}
-				lNewIssueFieldMap.put( Issue.JIRA_NAME_MAP.get( "assignee" ), assignee);
-
-				//JIRA formats dates differently so we pass this on to let the constructor for the issue know what's up.
-				lNewIssueFieldMap.put( "isJIRA", "true" );
-
-				//Create the new issue and set the key to the HPQC - ID
-				Issue lNewIssue = new Issue( lNewIssueFieldMap );
-				lNewIssue.setJIRAKey( lCurrentIssue.get( "key" ).toString() );
-				lIssueList.put( (String) lFields.get( "customfield_10609" ) , lNewIssue );
-			}
-
-		}
-		return lIssueList;
-	}
-
+	
 	/**
 	 * Post up the new changes. 
+	 * TODO: Rewrite with new specs
 	 * @param aHPQC the issues to post
 	 * @param LWSSO_COOKIE
 	 */
@@ -431,7 +308,7 @@ public class Service
 			//issue to post
 			Issue lIssue = lEntry.getValue();
 			//only post if was changed.
-			if ( lIssue.hasChanged() )
+			if ( lIssue.equals( "a" ) )
 			{
 				//This is done per the HPQC ALM REST API spec
 				//First you need to lock the defect via a POST
@@ -439,14 +316,14 @@ public class Service
 				//Third you delete the lock on exit.
 				try
 				{
-					URL lockURL = new URL( HPQC_URI + aProjectName + "/defects/" + lIssue.getID() + "/lock/" );
+					URL lockURL = new URL( HPQC_URI + aProjectName + "/defects/" + lIssue.getKey() + "/lock/" );
 					HttpURLConnection conn = (HttpURLConnection) lockURL.openConnection();
 
 					conn.setRequestMethod( "POST" );
 					conn.setRequestProperty( "Accept", "application/xml" );
 					conn.setRequestProperty( "Cookie", LWSSO_COOKIE );
 
-					URL putURL = new URL( HPQC_URI + aProjectName + "/defects/" + lIssue.getID() );
+					URL putURL = new URL( HPQC_URI + aProjectName + "/defects/" + lIssue.getKey() );
 					HttpURLConnection connPut = (HttpURLConnection) putURL.openConnection();
 
 					connPut.setRequestMethod( "PUT" );
@@ -487,6 +364,7 @@ public class Service
 
 	/**
 	 * Post up to JIRA almighty
+	 * TODO: Rewrite with new specs
 	 * @param aJIRA the map of issues to post
 	 * @param aProjectName the name of the project
 	 */
@@ -496,7 +374,7 @@ public class Service
 		{
 			Issue lIssue = lEntry.getValue();
 			//if the entry was added we have to do a POST per the JIRA REST spec
-			if ( lIssue.wasAdded() )
+			if ( lIssue.equals( "a" ))
 			{
 				JSONObject lToAdd = convertToJSON( lIssue, aProjectName, "create" );
 				String issueCreateURL = JIRA_URI + "/rest/api/2/issue/";
@@ -515,7 +393,7 @@ public class Service
 					out.close();
 
 					//Always nice to know it made it.
-					System.out.println( "Create of HPQC ID: " + lIssue.getID() + " was " + conn.getResponseMessage() );
+					System.out.println( "Create of HPQC ID: " + " was " + conn.getResponseMessage() );
 					//System.out.println(JSONObject.toJSONString( lToAdd ));
 					//Read response using reader rabbit
 					Reader rabbit = new InputStreamReader( conn.getInputStream() );
@@ -523,7 +401,6 @@ public class Service
 
 					//Make sure to set the JIRA key once we made it.
 					String lJIRAKey = response.get( "key" ).toString();
-					lIssue.setJIRAKey( lJIRAKey );
 					aJIRA.put( lEntry.getKey(), lIssue );
 				}
 				catch (Exception e)
@@ -533,12 +410,12 @@ public class Service
 
 			}
 			//If the issue was simply updated we need to do a put per JIRA REST spec
-			else if ( lIssue.hasChanged() )
+			else if ( lIssue.equals( "" ) )
 			{
 				JSONObject lToAdd = convertToJSON( lIssue, aProjectName, "update" );
 				//URI based off of issue key
 
-				String issueChangedURL = JIRA_URI + "/rest/api/2/issue/" + lIssue.getJIRAKey();
+				String issueChangedURL = JIRA_URI + "/rest/api/2/issue/" + lIssue.getKey();
 				try
 				{
 					URL issueChanged = new URL( issueChangedURL );
@@ -554,7 +431,7 @@ public class Service
 					out.write( JSONObject.toJSONString( lToAdd ) );
 					out.close();
 
-					System.out.println( "Update of HPQC ID: " + lIssue.getID() + " was " + conn.getResponseMessage() );
+					System.out.println( "Update of HPQC ID: " + lIssue.getKey() + " was " + conn.getResponseMessage() );
 					
 					if ( conn.getResponseMessage().equals( "Bad Request" ) )
 					{
@@ -567,63 +444,17 @@ public class Service
 				}
 
 			}
-			//We are linking to an issue
-			String lJIRAtoLink = lIssue.getJIRALinkKey();
-			if ( lJIRAtoLink != null && !lJIRAtoLink.equals( "" ) && !lIssue.hasLink() )
-			{
-				//Build link request
-				JSONObject link = new JSONObject();
-
-				//Type
-				JSONObject type = new JSONObject();
-				type.put( "name", "Blocks" );
-				link.put( "type", type );
-
-				//inward
-				JSONObject inward = new JSONObject();
-				inward.put( "key", lIssue.getJIRAKey() );
-				link.put( "inwardIssue", inward );
-
-				//outward
-				JSONObject outward = new JSONObject();
-				outward.put( "key", lJIRAtoLink );
-				link.put( "outwardIssue", outward );
-
-				//comment
-				JSONObject comment = new JSONObject();
-				comment.put( "body", "Linked to " + lJIRAtoLink );
-				link.put( "comment", comment );
-
-				try
-				{
-					URL linkURL = new URL( JIRA_URI + "/rest/api/2/issueLink" );
-					HttpURLConnection conn = (HttpURLConnection) linkURL.openConnection();
-					byte[] credBytes = ( "sync" + ":" + "sync").getBytes();
-					String credEncodedString = "Basic " + new BASE64Encoder().encode( credBytes );
-					conn.setDoOutput( true );
-					conn.setRequestProperty( "Authorization", credEncodedString );
-					conn.setRequestMethod( "POST" );
-					conn.setRequestProperty( "Content-Type", "application/json" );
-
-					OutputStreamWriter out = new OutputStreamWriter( conn.getOutputStream() );
-					out.write( JSONObject.toJSONString( link ) );
-					out.close();
-					
-					//System.out.println( conn.getResponseCode() );
-				}
-				catch( Exception e)
-				{
-					e.printStackTrace();
-				}
-
-				System.out.println( "Linked defect: " + lIssue.getJIRAKey() + " with " + lJIRAtoLink );
-				
-				lIssue.setLinkStatus( true );
-				aJIRA.put( lEntry.getKey(), lIssue );
-
-			}
 		}
+			
 	}
+
+	private static JSONObject convertToJSON( Issue aIssue, String aProjectName,
+			String aString )
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 	/**
 	 * Converts an issue to exporting in the XML format
@@ -656,11 +487,11 @@ public class Service
 			//ID
 			Element id = defect.createElement( "Field" );
 			id.setAttribute( "Name", "id" );
-			id.appendChild( defect.createElement( "Value" ) ).setTextContent( aIssue.getID() );
+			id.appendChild( defect.createElement( "Value" ) ).setTextContent( aIssue.getKey() );
 			fields.appendChild( id );
 
 			//synced fields
-			Map<String, String> syncedFields = aIssue.getSyncedFields();
+			Map<String, String> syncedFields = aIssue.getFields();
 			for ( Entry<String, String> field : syncedFields.entrySet() )
 			{
 				Element lNewField = defect.createElement( "Field" );
@@ -677,139 +508,7 @@ public class Service
 		return defect;
 	}
 
-	/**
-	 * Converts a document that we got from HPQC to a map of issues
-	 * TODO: check out SAX parsing 
-	 * @param aDoc from HPQC get method
-	 * @return the wonderful map of issues.
-	 */
-	public static Map<String,Issue> convertFromXML( Document aDoc )
-	{
-		Map<String,Issue> lIssueList = new HashMap<String,Issue>();
-		try
-		{
-			aDoc.getDocumentElement().normalize();
-			NodeList entities = aDoc.getDocumentElement().getChildNodes();
+	
 
-			for ( int i = 0; i < entities.getLength(); i++ )
-			{
-				Node currentDefect = entities.item( i );
-				currentDefect.normalize();
-				Node fields = currentDefect.getFirstChild();
-
-				Map<String,String> fieldMap = new HashMap<String,String>();
-				String key = "";
-
-				//Populate our field map in order to create the defect
-				Node currentField = fields.getFirstChild();
-				//Loop through the fields until we have parsed them all
-				while( currentField != null )
-				{
-					String fieldName = currentField.getAttributes().item( 0 ).getNodeValue();
-					//Make sure there is a value to parse and it is part of our HPQC field name map
-					if (currentField.hasChildNodes() && Issue.HPQC_NAME_MAP.containsKey( fieldName ) )
-					{
-						//Value will be blank string if it doesn't get set
-						String value = "";
-						if ( currentField.getFirstChild().hasChildNodes() )
-						{
-							//We have to parse the html text from these fields.
-							if ( fieldName.equals( "description" ) || fieldName.equals( "dev-comments" ) )
-							{
-								org.jsoup.nodes.Document html = 
-										Jsoup.parse( currentField.getFirstChild().getFirstChild().getNodeValue() );
-								value = html.text();
-							}
-							else
-							{
-								value = currentField.getFirstChild().getFirstChild().getNodeValue();
-							}
-						}
-						//we have to store the id as a key for the map we are generating
-						if ( fieldName.equals( "id" ) )
-						{
-							key = value;
-						}
-						fieldMap.put( fieldName, value );		
-					}
-					//move on
-					currentField = currentField.getNextSibling();
-				}
-				Issue lNewIssue = new Issue( fieldMap );
-				lIssueList.put( key, lNewIssue );
-			}
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		return lIssueList;
-	}
-
-	/**
-	 * Converts an issue to a JSON object for posting up
-	 * @param aIssue to convert to JSON
-	 * @param aProjectName 
-	 * @return JSON representation of the issue
-	 */
-	@SuppressWarnings("unchecked")
-	public static JSONObject convertToJSON( Issue aIssue, String aProjectName, String aMethod )
-	{
-		JSONObject lNewIssue = new JSONObject();
-		JSONObject fields = new JSONObject();
-
-		//Key (if exists)
-		if ( aIssue.getJIRAKey() != null )
-		{
-			lNewIssue.put( "key", aIssue.getJIRAKey() );
-		}
-
-		//Begin non synced fields
-
-		//IssueType
-		JSONObject issueType = new JSONObject();
-		issueType.put( "name", "HPQC Defect" );
-		fields.put( "issuetype", issueType );
-
-		//Project
-		JSONObject project = new JSONObject();
-		project.put( "key", aProjectName );
-		fields.put( "project", project );
-
-		//HPQC ID
-		fields.put( "customfield_10609", aIssue.getID() );
-
-		//Synced fields
-		Map<String, String> lSyncedFields = aIssue.getSyncedFields();
-
-		for ( Entry<String, String> field : lSyncedFields.entrySet() )
-		{
-			String lJIRAFieldName = Issue.HPQC_NAME_MAP.get( field.getKey() );
-			//assignee special case
-			if ( field.getKey().equals( Issue.JIRA_NAME_MAP.get( "assignee" ) ) )
-			{
-				JSONObject assignee = new JSONObject();
-				assignee.put( "name", field.getValue() );
-				fields.put( "assignee", assignee );
-			}
-			//reporter special case
-			else if ( field.getKey().equals( Issue.JIRA_NAME_MAP.get( "reporter" ) ) )
-			{
-				JSONObject reporter = new JSONObject();
-				reporter.put( "name", field.getValue() );
-				fields.put( "reporter", reporter );
-			}
-			//all others so far
-			else
-			{
-				fields.put( lJIRAFieldName , field.getValue() );
-			}
-		}
-
-		//Set our new fields and report out
-		lNewIssue.put( "fields", fields );
-		return lNewIssue;
-	}
+	
 }

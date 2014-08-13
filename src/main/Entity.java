@@ -1,6 +1,7 @@
 package main;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * An entity is the top level of the hierarchy. 
@@ -67,4 +68,16 @@ public interface Entity
 	 * @return true if successful, false otherwise
 	 */
 	public abstract boolean addComment( String aNewComment );
+	
+	/**
+	 * Returns the fields of the issue, the key is the field name and the value is the field value
+	 * @return map of the fields and their values
+	 */
+	public abstract Map<String,String> getFields();
+	
+	/**
+	 * Sets new fields of the issue, the field name is the Entry key and value is the field value
+	 * @param aNewFields
+	 */
+	public abstract void setFields( Map<String,String> aNewFields );
 }

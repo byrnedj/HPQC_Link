@@ -1,15 +1,17 @@
 package main;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 
 public class TestCase implements Entity
 {
+	private Document mXMLForm;
 
 	public TestCase( Document aXMLForm )
 	{
-		
+		mXMLForm = aXMLForm;
 	}
 	
 	@Override
@@ -66,6 +68,20 @@ public class TestCase implements Entity
 	{
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public Map<String, String> getFields()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setFields( Map<String, String> aNewFields )
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
